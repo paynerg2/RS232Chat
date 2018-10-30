@@ -4,9 +4,11 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:RS232Chat"
+        xmlns:prism="http://prismlibrary.com/"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        prism:ViewModelLocator.AutoWireViewModel="True"
+        Title="RS-232 Sample App" Height="300" Width="420">
     <Grid>
-        
+        <ContentControl prism:RegionManager.RegionName="ActiveRegion" />
     </Grid>
 </Window>
