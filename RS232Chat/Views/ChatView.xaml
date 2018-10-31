@@ -4,7 +4,17 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:RS232Chat.Views"
+             xmlns:prism="http://prismlibrary.com/"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             prism:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" >
+    
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Closing">
+            <i:InvokeCommandAction Command="{Binding CloseCommand}" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+    
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="200"/>
@@ -14,14 +24,23 @@
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
-        
-        <TextBox Grid.Column="0" Margin="10 10 10 0"
+
+        <TextBox x:Name="ChatTextBox"
+                 Grid.Column="0" Margin="10 10 10 0"
                  BorderBrush="Gray" BorderThickness="4"
-                 Height="200"/>
-        
+                 TextWrapping="Wrap" AcceptsReturn="True"
+                 Text="{Binding SendText, UpdateSourceTrigger=PropertyChanged}"
+                 Height="200">
+            <TextBox.InputBindings>
+                <KeyBinding Command="{Binding SendChatCommand}" Key="Return" Modifiers="Shift" />
+            </TextBox.InputBindings>
+        </TextBox>
+
         <TextBox Grid.Column="2" Margin="10 10 10 0"
                  IsReadOnly="True"
                  BorderBrush="Gray" BorderThickness="4"
+                 Text="{Binding ReceivedText}"
+                 TextWrapping="Wrap"
                  Height="200"/>
         
         <Button Content="Send" Grid.Row="1"
@@ -29,7 +48,7 @@
                 FontSize="16"
                 HorizontalAlignment="Right"
                 Margin="10 0 10 0"
-                Command="{Binding NavigateCommand}" CommandParameter="SetupView" />
+                Command="{Binding SendChatCommand}" />
         
         <Border CornerRadius="6" BorderBrush="Gray" BorderThickness="2"
                 Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="2"

@@ -1,6 +1,7 @@
-﻿using Prism.Mvvm;
+﻿using Prism.Commands;
+using Prism.Mvvm;
+using Prism.Regions;
 using System.Collections.ObjectModel;
-using System.IO.Ports;
 
 namespace RS232Chat.ViewModels
 {
@@ -8,6 +9,9 @@ namespace RS232Chat.ViewModels
     {
         ObservableCollection<string> _ports;
         string _selectedPort;
+        IRegionManager _regionManager;
+        
+        public DelegateCommand<string> StartCommand { get; private set; }
 
         public ObservableCollection<string> Ports
         {
@@ -21,15 +25,33 @@ namespace RS232Chat.ViewModels
             set
             {
                 SetProperty(ref _selectedPort, value);
-                //Port initialization goes here
+                StartCommand.RaiseCanExecuteChanged();
             }
         }
 
-        public SetupViewModel()
+        public SetupViewModel(IRegionManager regionManager)
         {
+            _regionManager = regionManager;
+            StartCommand = new DelegateCommand<string>(Start, CanStart);
+
             // Populate the serial port combobox
-            Ports = new ObservableCollection<string>(SerialPort.GetPortNames());
+            Ports = new ObservableCollection<string> { "COM1" };
         }
 
+        #region Commands
+        private bool CanStart(string arg)
+        {
+            return !string.IsNullOrEmpty(_selectedPort);
+        }
+
+        private void Start(string obj)
+        {
+            var param = new NavigationParameters
+            {
+                { "port", _selectedPort }
+            };
+            _regionManager.RequestNavigate("ActiveRegion", "ChatView", param);
+        }
+        #endregion
     }
 }
